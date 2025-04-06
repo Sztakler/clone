@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from utils.logging import configure_logging, LogLevel
-from services.robot_service import RobotService
+from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
 import logging
 
@@ -9,7 +9,7 @@ app = FastAPI()
 configure_logging(log_level=LogLevel.DEBUG)
 
 def get_robot_service():
-    return RobotService()
+    return robot_service
 
 @app.get("/")
 def root():
@@ -50,17 +50,17 @@ async def control_robot(command: RobotControlCommand):
 
     match command.action:
         case RobotAction.ON:
-            # TODO: Call robot turn_on()
             logging.info("Turning robot ON")
+            robot_service.turn_on()
         case RobotAction.OFF:
-            # TODO: Call robot turn_off()
             logging.info("Turning robot OFF")
+            robot_service.turn_off()
         case RobotAction.RESET:
-            # TODO: Call robot reset()
             logging.info("Resetting robot")
+            robot_service.reset()
         case RobotAction.FAN:
-            # TODO: Adjust fan mode to: {command.fan_mode}
             logging.info(f"Setting fan mode to: {command.fan_mode}")
+            robot_service.set_fan_mode(command.fan_mode)
         case _:
             logging.warning(f"Unsupported action: {command.action}")
             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
