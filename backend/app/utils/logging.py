@@ -9,6 +9,9 @@ class LogLevel(str, Enum):
     WARNING = "warning"
     ERROR = "error"
 
+    def __str__(self):
+        return self.value.upper()
+
 def configure_logging(
     log_level: LogLevel.INFO = LogLevel.INFO,
     log_file: str = "robot_monitor.log",
@@ -35,7 +38,13 @@ def configure_logging(
     console_handler.setFormatter(formatter)
 
     logger = logging.getLogger()
-    logger.setLevel(log_level)
+    log_level_mapping = {
+        LogLevel.INFO: logging.INFO,
+        LogLevel.DEBUG: logging.DEBUG,
+        LogLevel.WARNING: logging.WARNING,
+        LogLevel.ERROR: logging.ERROR,
+    }
+    logger.setLevel(log_level_mapping[log_level])
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
