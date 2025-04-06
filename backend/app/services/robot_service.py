@@ -57,6 +57,8 @@ class RobotService:
         else: # IDLE or ERROR
             power = random.uniform(7, 10)
 
+        if self.status == RobotStatus.RUNNING and self.fan_mode is None:
+            raise ValueError("fan_mode is required")
         self.power = power
         self.fan_speed = self.calculate_fan_speed(power)
 
@@ -105,6 +107,9 @@ class RobotService:
         return True
 
     def set_fan_mode(self, fan_mode: FanMode):
+        if fan_mode not in FanMode:
+            raise ValueError(f"Invalid fan mode: {fan_mode}")
+
         self.fan_mode = fan_mode
         self.logger.info(f"Fan mode set to {self.fan_mode}.")
         return True
