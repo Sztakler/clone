@@ -1,7 +1,8 @@
 import random
 import time
-from app.utils.time_utils import to_uint32
-from app.models import RobotState, RobotStatus, FanMode
+import logging
+from utils.time_utils import to_uint32
+from models import RobotState, RobotStatus, FanMode
 
 class RobotService:
     def __init__(self):
@@ -15,6 +16,7 @@ class RobotService:
             "running": (60, 100)
         }
         self.power: float = 0.0
+        self.logger = logging.getLogger(__name__)
 
     def __repr__(self):
         return (
@@ -34,19 +36,13 @@ class RobotService:
             normalized = (power - 15) / (20 - 15)
         return min(100, max(0, int(normalized * range_size + min_speed)))
 
-    def get_state(self) -> RobotState:
-        if self.status == RobotStatus.OFFLINE:
-            return RobotState(..., status="offline", ...)
-
-        power = random.uniform(15, 20) if self.status = RobotStatus.RUNNING else random.uniform(7, 10)
-        temperature = 30 + random.uniform(-5, 5) - (self.fan_speed * 0.1)
-
     def get_uptime(self):
         return to_uint32(time.time() - self.start_time)
     
-    def get_status(self) -> RobotState:
+    def get_state(self) -> RobotState:
+        self.logger.debug("Generating robot state...")
         if self.status == RobotStatus.OFFLINE:
-            return RobotStatus(
+            return RobotState(
                 temperature = 0.0,
                 power = 0.0,
                 status = RobotStatus.OFFLINE,
@@ -73,7 +69,7 @@ class RobotService:
             power = round(power, 1),
             status = self.status,
             fan_speed = self.fan_speed,
-            uptime = uptime,
+            uptime = self.uptime,
             logs = [f"Power: {power:.1f}W", f"Fan speed: {self.fan_speed}%"]
         )
 

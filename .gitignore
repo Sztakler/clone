@@ -22,3 +22,5 @@ build/
 *.db
 *.sock
 
+# Miscellaneous
+TODO.md
