@@ -27,7 +27,7 @@ class RobotState(BaseModel):
     power: Annotated[int, Field(ge=0, le=100)] | None
     status: RobotStatus
     fan_speed: Annotated[int, Field(ge=0, le=100)]
-    uptime: int
+    uptime: Annotated[int, Field(ge=0, le=2**32 - 1)]
     logs: list[str]
 
 @dataclass
