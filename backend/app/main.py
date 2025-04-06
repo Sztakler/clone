@@ -59,8 +59,8 @@ async def control_robot(command: RobotControlCommand):
             logging.info("Resetting robot")
             robot_service.reset()
         case RobotAction.FAN:
-            # TODO: Adjust fan mode to: {command.fan_mode}
             logging.info(f"Setting fan mode to: {command.fan_mode}")
+            robot_service.set_fan_mode(command.fan_mode)
         case _:
             logging.warning(f"Unsupported action: {command.action}")
             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")

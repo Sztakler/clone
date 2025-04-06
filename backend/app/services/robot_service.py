@@ -104,6 +104,10 @@ class RobotService:
         self.logger.info("Robot has been reset.")
         return True
 
+    def set_fan_mode(self, fan_mode: FanMode):
+        self.fan_mode = fan_mode
+        self.logger.info(f"Fan mode set to {self.fan_mode}.")
+        return True
 
 robot_service = RobotService()
         
