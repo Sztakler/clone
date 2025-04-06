@@ -1,9 +1,12 @@
 import random
+import time
+from app.utils.time_utils import to_uint32
 from app.models import RobotState, RobotStatus, FanMode
 
 class RobotService:
     def __init__(self):
         self.status: RobotStatus = RobotStatus.IDLE
+        self.start_time: float= time.time()
         self.uptime: int = 0
         self.fan_speed: int = 0
         self.fan_mode : FanMode = FanMode.PROPORTIONAL
@@ -38,6 +41,9 @@ class RobotService:
         power = random.uniform(15, 20) if self.status = RobotStatus.RUNNING else random.uniform(7, 10)
         temperature = 30 + random.uniform(-5, 5) - (self.fan_speed * 0.1)
 
+    def get_uptime(self):
+        return to_uint32(time.time() - self.start_time)
+    
     def get_status(self) -> RobotState:
         if self.status == RobotStatus.OFFLINE:
             return RobotStatus(
@@ -60,7 +66,7 @@ class RobotService:
         base_temperature = random.uniform(20, 30)
         temperature = base_temperature + random.uniform(-1, 1) * power - (self.fan_speed * 0.1)
 
-        self.uptime += 1
+        self.uptime = self.get_uptime()
 
         return RobotState(
             temperature = round(temperature, 1),
