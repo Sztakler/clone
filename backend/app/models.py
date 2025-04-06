@@ -1,7 +1,8 @@
-from pydantic import BaseModel, Field
-from typing import Annotated
+from pydantic import BaseModel, Field, ValidationError, model_validator
+from typing import Annotated, Optional
 from enum import Enum
 from dataclasses import dataclass
+from fastapi import HTTPException
 
 class RobotStatus(str, Enum):
     IDLE = "idle"
@@ -13,6 +14,7 @@ class RobotAction(str, Enum):
     ON = "on"
     OFF = "off"
     RESET = "reset"
+    FAN = "fan"
 
 class FanMode(str, Enum):
     PROPORTIONAL = "proportional"
@@ -28,5 +30,11 @@ class RobotState(BaseModel):
 
 class RobotControlCommand(BaseModel):
     action: RobotAction
-    fan_mode: FanMode
-   
+    fan_mode: Optional[FanMode] = None
+
+    @model_validator(mode="after")
+    def check_fan_mode_required(self):
+        if self.action == RobotAction.FAN and self.fan_mode is None:
+            raise HTTPException(status_code=422,
+                                detail="fan_mode is required when action is FAN")
+        return self
