@@ -73,6 +73,16 @@ class RobotService:
             logs = [f"Power: {power:.1f}W", f"Fan speed: {self.fan_speed}%"]
         )
 
+    def turn_on(self):
+        if self.status == RobotStatus.RUNNING:
+            self.logger.warning("Robot is already ON.")
+            return False
+
+        self.status = RobotStatus.RUNNING
+        self.start_time = time.time()
+        self.logger.info("Robot turned ON.")
+        return True
+
 robot_service = RobotService()
         
 

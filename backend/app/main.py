@@ -48,9 +48,11 @@ async def control_robot(command: RobotControlCommand):
     """
     logging.debug(f"Received control command: {command}")
 
+    robot_service = RobotService()
+
     match command.action:
         case RobotAction.ON:
-            # TODO: Call robot turn_on()
+            robot_service.turn_on
             logging.info("Turning robot ON")
         case RobotAction.OFF:
             # TODO: Call robot turn_off()
