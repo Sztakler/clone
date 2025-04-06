@@ -58,8 +58,7 @@ class RobotService:
             power = random.uniform(7, 10)
 
         if self.status == RobotStatus.RUNNING and self.fan_mode is None:
-            raise ValueError("fan_mode must be PROPORTIONAL or STATIC")
-
+            raise ValueError("fan_mode is required")
         self.power = power
         self.fan_speed = self.calculate_fan_speed(power)
 
