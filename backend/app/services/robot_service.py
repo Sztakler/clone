@@ -107,7 +107,7 @@ class RobotService:
         return True
 
     def set_fan_mode(self, fan_mode: FanMode):
-        if not isinstance(fan_mode, FanMode):
+        if fan_mode not in FanMode:
             raise ValueError(f"Invalid fan mode: {fan_mode}")
 
         self.fan_mode = fan_mode
