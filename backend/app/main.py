@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends
 from utils.logging import configure_logging
-from services.robot_service import RobotService
+from services.robot_service import RobotService, LogLevel
 from models import RobotControlCommand
 import logging
 
 app = FastAPI()
 
-configure_logging(log_level="DEBUG")
+configure_logging(log_level=LogLevel.DEBUG)
 
 def get_robot_service():
     return RobotService()
