@@ -16,7 +16,6 @@ def test_control_robot_turn_off():
 def test_control_robot_invalid_action():
     response = client.post("/control", json={"action": "invalid_action"})
     assert response.status_code == 422
-    print(response.json())
     assert response.json() == {'detail': [{'type': 'enum', 'loc': ['body', 'action'], 'msg': "Input should be 'on', 'off', 'reset' or 'fan'", 'input': 'invalid_action', 'ctx': {'expected': "'on', 'off', 'reset' or 'fan'"}}]}
 
 def test_fan_action_requires_fan_mode():
