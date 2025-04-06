@@ -10,7 +10,7 @@ class LogLevel(str, Enum):
     ERROR = "error"
 
 def configure_logging(
-    log_level: LogLevel.INFO,
+    log_level: LogLevel.INFO = LogLevel.INFO,
     log_file: str = "robot_monitor.log",
     max_log_size: int = 10 * 1024 * 1024,# 10 MB
     backup_count: int = 3
