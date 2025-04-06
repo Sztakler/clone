@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from utils.logging import configure_logging, LogLevel
-from services.robot_service import RobotService
+from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
 import logging
 
@@ -9,7 +9,7 @@ app = FastAPI()
 configure_logging(log_level=LogLevel.DEBUG)
 
 def get_robot_service():
-    return RobotService()
+    return robot_service
 
 @app.get("/")
 def root():
@@ -48,14 +48,12 @@ async def control_robot(command: RobotControlCommand):
     """
     logging.debug(f"Received control command: {command}")
 
-    robot_service = RobotService()
-
     match command.action:
         case RobotAction.ON:
-            robot_service.turn_on
+            robot_service.turn_on()
             logging.info("Turning robot ON")
         case RobotAction.OFF:
-            # TODO: Call robot turn_off()
+            robot_service.turn_off()
             logging.info("Turning robot OFF")
         case RobotAction.RESET:
             # TODO: Call robot reset()

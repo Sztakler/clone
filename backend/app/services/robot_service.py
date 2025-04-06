@@ -30,7 +30,7 @@ class RobotService:
     def calculate_fan_speed(self, power: float) -> int:
         min_speed, max_speed = self.fan_ranges[self.status]
         range_size = max_speed - min_speed
-        if self.status == "idle":
+        if self.status == RobotStatus.IDLE:
             normalized = (power - 7) / (10 - 7)
         else:
             normalized = (power - 15) / (20 - 15)
@@ -50,6 +50,7 @@ class RobotService:
                 uptime = 0,
                 logs = ["System offline"]
             )
+        self.logger.info(self.status)
 
         if self.status == RobotStatus.RUNNING:
             power = random.uniform(15, 20)
@@ -74,6 +75,7 @@ class RobotService:
         )
 
     def turn_on(self):
+        self.logger.info(self.status)
         if self.status == RobotStatus.RUNNING:
             self.logger.warning("Robot is already ON.")
             return False
@@ -81,6 +83,18 @@ class RobotService:
         self.status = RobotStatus.RUNNING
         self.start_time = time.time()
         self.logger.info("Robot turned ON.")
+        self.logger.info(self.status)
+        return True
+
+    def turn_off(self):
+        if self.status == RobotStatus.OFFLINE:
+            self.logger.warning("Robot is already OFF.")
+            return False
+
+        self.status = RobotStatus.OFFLINE
+        self.fan_speed = 0
+        self.fan_mode = FanMode.PROPORTIONAL
+        self.logger.info("Robot turned OFF.")
         return True
 
 robot_service = RobotService()
