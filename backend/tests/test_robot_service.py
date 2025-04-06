@@ -28,7 +28,27 @@ class TestRobotService(unittest.TestCase):
         self.assertGreater(state.fan_speed, 0)
 
     def test_fan_mode_required_for_fan_action(self):
+        self.robot_service.turn_on()
+        self.robot_service.fan_mode = None
+
         with self.assertRaises(ValueError):
-            self.robot_service.fan_mode = None
             self.robot_service.get_state()
+
+    def test_set_fan_mode(self):
+        self.robot_service.set_fan_mode(FanMode.PROPORTIONAL)
+        self.assertEqual(self.robot_service.fan_mode, FanMode.PROPORTIONAL)
+
+        with self.assertRaises(ValueError):
+            self.robot_service.set_fan_mode("invalid")
+
+    def test_set_fan_mode_valid(self):
+        self.robot_service.set_fan_mode(FanMode.STATIC)
+        self.assertEqual(self.robot_service.fan_mode, FanMode.STATIC)
+
+    def test_set_fan_mode_invalid(self):
+        with self.assertRaises(ValueError):
+            self.robot_service.set_fan_mode("invalid")
             
+    def test_set_fan_mode_none(self):
+        with self.assertRaises(ValueError):
+            self.robot_service.set_fan_mode(None)
