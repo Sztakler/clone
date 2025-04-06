@@ -97,6 +97,14 @@ class RobotService:
         self.logger.info("Robot turned OFF.")
         return True
 
+    def reset(self):
+        self.status = RobotStatus.IDLE
+        self.fan_speed = 0
+        self.fan_mode = FanMode.PROPORTIONAL
+        self.logger.info("Robot has been reset.")
+        return True
+
+
 robot_service = RobotService()
         
 

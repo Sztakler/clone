@@ -50,14 +50,14 @@ async def control_robot(command: RobotControlCommand):
 
     match command.action:
         case RobotAction.ON:
-            robot_service.turn_on()
             logging.info("Turning robot ON")
+            robot_service.turn_on()
         case RobotAction.OFF:
-            robot_service.turn_off()
             logging.info("Turning robot OFF")
+            robot_service.turn_off()
         case RobotAction.RESET:
-            # TODO: Call robot reset()
             logging.info("Resetting robot")
+            robot_service.reset()
         case RobotAction.FAN:
             # TODO: Adjust fan mode to: {command.fan_mode}
             logging.info(f"Setting fan mode to: {command.fan_mode}")
