@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Anotated
+from typing import Annotated
 from enum import Enum
 from dataclasses import dataclass
 
