@@ -3,8 +3,7 @@ from datetime import timedelta
 
 def to_uint32(value: float, max_value: Optional[int] = None) -> int:
     """
-    Converts float value to uin32 with custom max, wrapping via modulo.
-
+    Converts float value to uint32 with custom max, wrapping via modulo.
     Args:
         value: Value to convert (e.g. time difference).
         max_value: Maximum allowed value (defaults to 2^32 - 1).
