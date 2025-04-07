@@ -13,28 +13,6 @@ configure_logging(log_level=LogLevel.DEBUG)
 def get_robot_service():
     return robot_service
 
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
-    try:
-        while True:
-            data = await websocket.receive_text()
-            state =robot_service.get_state()
-            await websocket.send_json(state)
-            await asyncio.sleep(0.1)
-    except WebSocketDisconnect:
-        logging.info("Client disconnected")
-
-# Test HTML
-@app.get("/ws_test")
-async def ws_test():
-    return HTMLResponse("""
-    <script>
-        const ws = new WebSocket("ws://localhost:8000/ws");
-        ws.onmessage = (event) => console.log(event.data);
-    </script>
-    """)
-
 @app.get("/")
 def root():
     logging.info("Endpoint / called")
@@ -90,6 +68,38 @@ async def control_robot(command: RobotControlCommand):
             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
 
     return {"status": "success", "action": command.action}
+
+@app.websocket("/ws/state")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            state = robot_service.get_state()
+
+            ws_data = {
+                "temperature": state.temperature,
+                "power": state.power,
+                "status": state.status,
+                "fan_speed": state.fan_speed,
+                "uptime": state.uptime,
+            }
+
+            await websocket.send_json(ws_data)
+            await asyncio.sleep(0.1) # 10 Hz
+    except WebSocketDisconnect:
+        logging.info("Client disconnected")
+    except Exception as e:
+        logging.error(f"WebSocket error: {str(e)}")
+
+# Test HTML
+@app.get("/ws_test")
+async def ws_test():
+    return HTMLResponse("""
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws/state");
+        ws.onmessage = (event) => console.log(event.data);
+    </script>
+    """)
 
 if __name__ == "__main__":
     import uvicorn
