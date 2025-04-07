@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi.responses import HTMLResponse
+import asyncio
 from utils.logging import configure_logging, LogLevel
 from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
@@ -10,6 +12,28 @@ configure_logging(log_level=LogLevel.DEBUG)
 
 def get_robot_service():
     return robot_service
+
+@app.websocket("/ws")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            state =robot_service.get_state()
+            await websocket.send_json(state)
+            await asyncio.sleep(0.1)
+    except WebSocketDisconnect:
+        logging.info("Client disconnected")
+
+# Test HTML
+@app.get("/ws_test")
+async def ws_test():
+    return HTMLResponse("""
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws");
+        ws.onmessage = (event) => console.log(event.data);
+    </script>
+    """)
 
 @app.get("/")
 def root():
