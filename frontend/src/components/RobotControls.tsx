@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import axios, { CanceledError } from "axios";
-import { FanMode, RobotAction, RobotControlCommand } from "../types/types";
+import { FanMode, RobotAction, RobotControlCommand, RobotStateData } from "../types/types";
 
 import styles from "./RobotControls.module.css"
+import RobotState from "./RobotState";
 
 export default function RobotControls() {
+  const [state, setState] = useState<RobotStateData | null>(null);
   const [status, setStatus] = useState<string | null>(null);
   const [fanMode, setFanMode] = useState<FanMode>(FanMode.PROPORTIONAL);
   const [fanSpeed, setFanSpeed] = useState<number>(0);
@@ -12,11 +14,23 @@ export default function RobotControls() {
   const [controlError, setControlError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [disabledSetSpeed, setDisabledSetSpeed] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  async function fetchState() {
+    try {
+      const response = await axios.get<RobotStateData>('http://localhost:8000/state');
+      setState(response.data);
+      setLoading(false);
+      if (response.data.status === "offline")
+        setPowerOn(false);
+    } catch (err) {
+      setError('Error fetching robot state');
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-    axios.get("http://localhost:8000/status")
-      .then(res => setStatus(res.data.status))
-      .catch(err => setControlError(err.message));
+    fetchState();
   }, []);
 
   const sendCommand = async (command: RobotControlCommand) => {
@@ -44,7 +58,7 @@ export default function RobotControls() {
 
   const handleSetFanMode = async () => {
     const command: RobotControlCommand = { action: RobotAction.FAN, fan_mode: fanMode };
-    try{
+    try {
       setLoading(true);
       sendCommand(command);
       console.log("Fan speed changed.")
@@ -67,6 +81,9 @@ export default function RobotControls() {
     sendCommand(command);
   }
 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
     <div className={styles.container}>
       <div>
@@ -74,7 +91,7 @@ export default function RobotControls() {
         <div className={styles.controlButtons}>
           <button onClick={handleTogglePower}>
             {powerOn ? "Turn OFF" : "Turn ON"}
-            </button>
+          </button>
           <button onClick={handleReset}>Reset</button>
         </div>
       </div>
@@ -93,12 +110,12 @@ export default function RobotControls() {
 
       <div>
         <label>Fan Speed:</label>
-        <input type="range" min="0" max="100" value={fanSpeed} onChange={(e) => setFanSpeed(Number(e.target.value))}/>
+        <input type="range" min="0" max="100" value={fanSpeed} onChange={(e) => setFanSpeed(Number(e.target.value))} />
         <span>{fanSpeed}%</span>
         <button onClick={handleSetFanSpeed} disabled={disabledSetSpeed}>
           Set speed
-          </button>
-        </div>
+        </button>
+      </div>
 
     </div >
   );
