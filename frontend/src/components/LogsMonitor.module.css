@@ -6,7 +6,7 @@
 }
 
 h2 {
-  font-size: 1.5rem;
+  font-size: 24px;
   margin-bottom: 15px;
 }
 
@@ -16,8 +16,8 @@ pre {
   overflow-y: auto;
   max-height: 400px;
   background-color: #e4e4e9;
-  padding: 10px;
-  border-radius: 5px;
-  font-family: "Roboto Mono", Courier, monospace;
-  font-size: 0.9rem;
+  padding: 8px;
+  border-radius: 4px;
+  font-family: "Roboto Mono", monospace;
+  font-size: 14px;
 }

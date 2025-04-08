@@ -7,7 +7,7 @@
 }
 
 h2 {
-  font-size: 1.8em;
+  font-size: 24px;
 }
 
 .controlButtons {
@@ -24,12 +24,13 @@ select {
 
 button {
   padding: 8px;
-  background-color: #e4e4e9;
   border: 1px solid #333;
   color: #333333;
   border-radius: 4px;
   transition: background-color 0.3s;
   transition: color 0.3s;
+  width: fit-content;
+  font-size: 16px;
 }
 
 button:hover {
@@ -38,7 +39,20 @@ button:hover {
 }
 
 select {
+  background-color: #f4f4f9;
+  color: #333333;
+  border: 1px solid #333;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 16px;
   width: 150px;
+  box-sizing: border-box;
+}
+
+select option {
+  background-color: #f4f4f9;
+  color: #333333;
+  padding: 8px;
 }
 
 .fanModeSelect {
@@ -49,6 +63,6 @@ select {
 
 
 label {
-  font-size: 1.2em;
+  font-size: 24px;
   font-weight: 600;
 }
