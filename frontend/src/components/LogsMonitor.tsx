@@ -5,11 +5,19 @@ import styles from "./LogsMonitor.module.css"
 
 export default function LogsMonitor() {
   const [logs, setLogs] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchLogs = async () => {
-      const response = await axios.get("http://localhost:8000/logs");
-      setLogs(response.data);
+      try {
+        const response = await axios.get("http://localhost:8000/logs");
+        setLogs(response.data);
+      }
+      catch (err: any) {
+        console.error("Error while fetching logs: " + err.message)
+        setError("Error fetching robot logs")
+      }
+
     };
 
     fetchLogs();
@@ -17,6 +25,10 @@ export default function LogsMonitor() {
 
     return () => clearInterval(interval);
   }, []);
+
+  if (error) {
+    return (<div>{error}</div>)
+  }
 
   return (
     <div className={styles.logs}>
