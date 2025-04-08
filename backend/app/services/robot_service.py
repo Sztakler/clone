@@ -114,6 +114,14 @@ class RobotService:
         self.logger.info(f"Fan mode set to {self.fan_mode}.")
         return True
 
+    def set_fan_speed(self, fan_speed: int):
+        if 0 <= speed <= 100:
+            self.fan_speed = fan_speed
+            logging.info(f"Fan speed set to {self.fan_speed}")
+        else:
+            logging.error(f"Invalid fan speed: {fan_speed}")
+            raise ValueError("Fan speed must be between 0 and 100.")
+
 robot_service = RobotService()
         
 

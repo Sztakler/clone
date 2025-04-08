@@ -63,8 +63,9 @@ async def get_state(robot_service: RobotService = Depends(get_robot_service)):
 async def control_robot(command: RobotControlCommand):
     """
     Accepts a control command for the robot and returns a confirmation message.
-    Supported actions: on, off, reset, fan.
+    Supported actions: on, off, reset, fan, fan_speed.
     If action is 'fan', a fan_mode must be specified.
+    If action is 'fan_speed', a fan_speed must be specified and fan_mode must be 'static'.
     """
     logging.debug(f"Received control command: {command}")
 
@@ -81,6 +82,9 @@ async def control_robot(command: RobotControlCommand):
         case RobotAction.FAN:
             logging.info(f"Setting fan mode to: {command.fan_mode}")
             robot_service.set_fan_mode(command.fan_mode)
+        case RobotAction.FAN_SPEED:
+            logging.info(f"Setting fan speed to {command.fan_speed}")
+            robot_service.set_fan_speed(command.fan_speed)
         case _:
             logging.warning(f"Unsupported action: {command.action}")
             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
@@ -178,6 +182,9 @@ async def websocket_control(websocket: WebSocket):
                         case RobotAction.FAN:
                             logging.info(f"Setting fan mode to: {command.fan_mode}")
                             robot_service.set_fan_mode(command.fan_mode)
+                        case: RobotAction.FAN_SPEED:
+                            logging.info(f"Setting fan speed to {command.fan_speed}%")
+                            robot_service.set_fan_speed(command.fan_speed)
                         case _:
                             logging.warning(f"Unsupported action: {command.action}")
                             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
