@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from utils.logging import configure_logging, LogLevel
 from services.robot_service import RobotService, robot_service
@@ -9,6 +10,18 @@ from pydantic import ValidationError
 from websockethub import WebSocketHub
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 configure_logging(log_level=LogLevel.DEBUG)
 
