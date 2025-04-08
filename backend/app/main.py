@@ -139,13 +139,6 @@ async def websocket_control(websocket: WebSocket):
         logging.info("Control client disconnected")
     except Exception as e:
         logging.error(f"WebSocket error: {str(e)}")
-        await websocket.send_json({
-                                      "status": "critical_error",
-                                      "detail": str(e),
-                                      "code": 500
-                                  })
-    finally:
-        await websocket.close()
 
 # Test HTML
 @app.get("/ws_test")
