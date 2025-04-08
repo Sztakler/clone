@@ -2,13 +2,13 @@ from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconn
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
-from utils.logging import configure_logging, LogLevel
-from utils.files import read_last_lines
-from services.robot_service import RobotService, robot_service
-from models import RobotControlCommand, RobotState, RobotAction
+from app.utils.logging import configure_logging, LogLevel
+from app.utils.files import read_last_lines
+from app.services.robot_service import RobotService, robot_service
+from app.models import RobotControlCommand, RobotState, RobotAction
 import logging
 from pydantic import ValidationError
-from websockethub import WebSocketHub
+from app.websockethub import WebSocketHub
 import os
 
 
@@ -280,4 +280,5 @@ async def websocket_control_test():
 
 if __name__ == "__main__":
     import uvicorn
+  
     uvicorn.run(app, host="0.0.0.0", port=8000)

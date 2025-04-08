@@ -1,8 +1,8 @@
 import random
 import time
 import logging
-from utils.time_utils import to_uint32
-from models import RobotState, RobotStatus, FanMode
+from app.utils.time_utils import to_uint32
+from app.models import RobotState, RobotStatus, FanMode
 
 class RobotService:
     def __init__(self):
