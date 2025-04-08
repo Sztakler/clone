@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import axios, { CanceledError } from "axios";
 import { FanMode, RobotAction, RobotControlCommand } from "../types/types";
 
 import styles from "./RobotControls.module.css"
@@ -9,22 +9,23 @@ export default function RobotControls() {
   const [fanMode, setFanMode] = useState<FanMode>(FanMode.PROPORTIONAL);
   const [fanSpeed, setFanSpeed] = useState<number>(0);
   const [powerOn, setPowerOn] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [controlError, setControlError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [disabledSetSpeed, setDisabledSetSpeed] = useState<boolean>(true);
 
   useEffect(() => {
     axios.get("http://localhost:8000/status")
       .then(res => setStatus(res.data.status))
-      .catch(err => setError(err));
+      .catch(err => setControlError(err.message));
   }, []);
 
   const sendCommand = async (command: RobotControlCommand) => {
     try {
       const response = await axios.post("http://localhost:8000/control", command);
       console.log('Success:', response.data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error sending command:", err);
-      setError("Error sending command");
+      setControlError("Error sending command " + err.message);
     }
   }
 
@@ -47,9 +48,14 @@ export default function RobotControls() {
       setLoading(true);
       sendCommand(command);
       console.log("Fan speed changed.")
-    } catch (err) {
-      console.error("Error changing fan speed: ", err);
+    } catch (err: any) {
+      setControlError("Error changing fan speed")
+      console.error("Error changing fan speed: ", err.message);
     } finally {
+      if (command.fan_mode === FanMode.STATIC)
+        setDisabledSetSpeed(false);
+      else
+        setDisabledSetSpeed(true)
       setLoading(false);
     }
   };
@@ -81,17 +87,18 @@ export default function RobotControls() {
           <option value={FanMode.PROPORTIONAL}> Proportional</option>
           <option value={FanMode.STATIC}> Static</option>
         </select>
-        <button onClick={handleSetFanMode}>Set Fan Mode</button>
+        <button onClick={handleSetFanMode}>Set mode</button>
       </div>
 
       <div>
         <label>Fan Speed:</label>
         <input type="range" min="0" max="100" value={fanSpeed} onChange={(e) => setFanSpeed(Number(e.target.value))}/>
         <span>{fanSpeed}%</span>
-        <button onClick={handleSetFanSpeed} disabled={loading}>
-          {loading ? "Changing..." : "Set Fan Speed"}
+        <button onClick={handleSetFanSpeed} disabled={disabledSetSpeed}>
+          Set speed
           </button>
         </div>
+
     </div >
   );
 

@@ -38,6 +38,15 @@ button:hover {
   color: white;
 }
 
+button:disabled {
+  background-color: #e0e0e0;
+  color: #b0b0b0;
+  cursor: not-allowed;
+  border: 2px solid #ccc;
+  transform: none;
+}
+
+
 select {
   background-color: #f4f4f9;
   color: #333333;
