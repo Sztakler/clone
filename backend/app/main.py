@@ -80,8 +80,11 @@ async def control_robot(command: RobotControlCommand):
             logging.info("Resetting robot")
             robot_service.reset()
         case RobotAction.FAN:
-            logging.info(f"Setting fan mode to: {command.fan_mode}")
-            robot_service.set_fan_mode(command.fan_mode)
+            try:
+                logging.info(f"Setting fan mode to: {command.fan_mode}")
+                robot_service.set_fan_mode(command.fan_mode)
+            except Exception as e:
+                logging.info(f"{str(e)}")
         case RobotAction.FAN_SPEED:
             logging.info(f"Setting fan speed to {command.fan_speed}")
             robot_service.set_fan_speed(command.fan_speed)

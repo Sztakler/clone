@@ -102,15 +102,17 @@ class RobotService:
         return True
 
     def reset(self):
-        self.status = RobotStatus.IDLE
-        self.fan_speed = 0
-        self.fan_mode = FanMode.PROPORTIONAL
-        self.logger.info("Robot has been reset.")
-        return True
+        if self.status in [RobotStatus.IDLE, RobotStatus.ERROR]:        
+            self.status = RobotStatus.IDLE
+            self.uptime = 0
+            self.logger.info("Robot has been reset.")
+            return True
 
     def set_fan_mode(self, fan_mode: FanMode):
         if fan_mode not in FanMode:
-            raise ValueError(f"Invalid fan mode: {fan_mode}")
+            error_message = f"Invalid fan mode: {fan_mode}"
+            logging.error(error_message)
+            raise ValueError(error_message)
 
         self.fan_mode = fan_mode
         self.logger.info(f"Fan mode set to {self.fan_mode}.")
