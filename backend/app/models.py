@@ -15,6 +15,7 @@ class RobotAction(str, Enum):
     OFF = "off"
     RESET = "reset"
     FAN = "fan"
+    FAN_SPEED = "fan_speed"
 
 class FanMode(str, Enum):
     PROPORTIONAL = "proportional"
@@ -31,10 +32,13 @@ class RobotState(BaseModel):
 class RobotControlCommand(BaseModel):
     action: RobotAction
     fan_mode: Optional[FanMode] = None
+    fan_speed: Optional[int] = None
 
     @model_validator(mode="after")
     def check_fan_mode_required(self):
         if self.action == RobotAction.FAN and self.fan_mode is None:
             raise HTTPException(status_code=422,
                                 detail="fan_mode is required when action is FAN")
+        if self.action == RobotAction.FAN_SPEED and self.fan_speed is None:
+            raise HTTPException(status_code=422, detail="fan_speed is required when action is FAN_SPEED")
         return self
