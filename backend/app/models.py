@@ -39,6 +39,6 @@ class RobotControlCommand(BaseModel):
         if self.action == RobotAction.FAN and self.fan_mode is None:
             raise HTTPException(status_code=422,
                                 detail="fan_mode is required when action is FAN")
-         if self.action == RobotAction.FAN_SPEEDand self.fan_speed is None:
+        if self.action == RobotAction.FAN_SPEED and self.fan_speed is None:
             raise HTTPException(status_code=422, detail="fan_speed is required when action is FAN_SPEED")
         return self

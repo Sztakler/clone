@@ -182,7 +182,7 @@ async def websocket_control(websocket: WebSocket):
                         case RobotAction.FAN:
                             logging.info(f"Setting fan mode to: {command.fan_mode}")
                             robot_service.set_fan_mode(command.fan_mode)
-                        case: RobotAction.FAN_SPEED:
+                        case RobotAction.FAN_SPEED:
                             logging.info(f"Setting fan speed to {command.fan_speed}%")
                             robot_service.set_fan_speed(command.fan_speed)
                         case _:
