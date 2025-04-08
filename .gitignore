@@ -24,5 +24,7 @@ build/
 
 # Miscellaneous
 TODO.md
-*.log.*
+
+# Logs
+backend/*.log*
 
