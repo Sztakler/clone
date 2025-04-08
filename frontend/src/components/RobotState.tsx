@@ -34,11 +34,25 @@ export default function RobotState() {
     <div className="container">
       <h1>Robot State</h1>
       <ul>
-      <li>Status: {state?.status}</li>
-      <li>Temperature: {state?.temperature}°C</li>
-      <li>Fan speed: {state?.fan_speed}%</li>
-      <li>Power: {state?.power}W</li>
-      <li>Uptime: {state?.uptime}s</li>
+        <li>
+          <div>Status:</div>
+          <div>{state?.status}</div>
+          </li>
+        <li>
+          <div>Temperature:</div>
+          <div>{state?.temperature}°C</div>
+          </li>
+        <li>
+          <div>Fan speed:</div><div>{state?.fan_speed}%</div>
+          </li>
+        <li>
+          <div>Power:</div>
+          <div>{state?.power}W</div>
+          </li>
+        <li>
+          <div>Uptime:</div>
+          <div>{state?.uptime}s</div>
+          </li>
       </ul>
     </div>
   )
