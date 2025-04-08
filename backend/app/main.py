@@ -6,6 +6,7 @@ from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
 import logging
 from pydantic import ValidationError
+from websockethub import WebSocketHub
 
 app = FastAPI()
 
@@ -70,31 +71,34 @@ async def control_robot(command: RobotControlCommand):
 
     return {"status": "success", "action": command.action}
 
+state_hub = WebSocketHub()
+control_hub = WebSocketHub()
+
 @app.websocket("/ws/state")
 async def websocket_endpoint(websocket: WebSocket):
-    await websocket.accept()
+    await state_hub.connect(websocket)
     try:
         while True:
             state = robot_service.get_state()
-
-            ws_data = {
+            await state_hub.broadcast_json(
+            {
                 "temperature": state.temperature,
                 "power": state.power,
                 "status": state.status,
                 "fan_speed": state.fan_speed,
                 "uptime": state.uptime,
-            }
-
-            await websocket.send_json(ws_data)
+            }, websocket
+            )
             await asyncio.sleep(0.1) # 10 Hz
     except WebSocketDisconnect:
+        state_hub.disconnect(websocket)
         logging.info("Client disconnected")
     except Exception as e:
         logging.error(f"WebSocket error: {str(e)}")
 
 @app.websocket("/ws/control")
 async def websocket_control(websocket: WebSocket):
-    await websocket.accept()
+    await control_hub.connect(websocket)
     try:
         while True:
             try:
@@ -118,24 +122,25 @@ async def websocket_control(websocket: WebSocket):
                         case _:
                             logging.warning(f"Unsupported action: {command.action}")
                             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
-                    await websocket.send_json({
+                    await control_hub.broadcast_json({
                                                 "status": "success",
                                                 "action": command.action,
                                                 "fan_mode": command.fan_mode
                                               })
                 except HTTPException as e:
-                    await websocket.send_json({
+                    await control_hub.broadcast_json({
                                                       "status": "error",
                                                       "detail": e.detail,
                                                       "code": e.status_code
                                                   })
             except ValidationError as e:
-                await websocket.send_json({
+                await control_hub.broadcast_json({
                                               "status": "validation_error",
                                               "detail": e.errors(),
                                               "code": 422,
                                           })
     except WebSocketDisconnect:
+        control_hub.disconnect(websocket)
         logging.info("Control client disconnected")
     except Exception as e:
         logging.error(f"WebSocket error: {str(e)}")
