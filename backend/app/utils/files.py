@@ -1,3 +1,5 @@
+import os
+
 def read_last_lines(file_path: str, num_lines: int = 50) -> list[str]:
     """Efficiently read the last `num_lines` lines of a file."""
     with open(file_path, "rb") as f:

@@ -116,7 +116,6 @@ This is intended for real-time inspection and debugging from the frontend interf
 
 ⚠️ Does **not** include archived logs (`.log.1`, `.log.2`, etc.).
 
-- Max lines: 500
 - Response type: plain text
 """
 )
