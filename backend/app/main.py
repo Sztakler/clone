@@ -5,6 +5,7 @@ from utils.logging import configure_logging, LogLevel
 from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
 import logging
+from pydantic import ValidationError
 
 app = FastAPI()
 
@@ -91,6 +92,61 @@ async def websocket_endpoint(websocket: WebSocket):
     except Exception as e:
         logging.error(f"WebSocket error: {str(e)}")
 
+@app.websocket("/ws/control")
+async def websocket_control(websocket: WebSocket):
+    await websocket.accept()
+    try:
+        while True:
+            try:
+                data = await websocket.receive_json()
+                command = RobotControlCommand(**data)
+
+                try:
+                    match command.action:
+                        case RobotAction.ON:
+                            logging.info("Turning robot ON")
+                            robot_service.turn_on()
+                        case RobotAction.OFF:
+                            logging.info("Turning robot OFF")
+                            robot_service.turn_off()
+                        case RobotAction.RESET:
+                            logging.info("Resetting robot")
+                            robot_service.reset()
+                        case RobotAction.FAN:
+                            logging.info(f"Setting fan mode to: {command.fan_mode}")
+                            robot_service.set_fan_mode(command.fan_mode)
+                        case _:
+                            logging.warning(f"Unsupported action: {command.action}")
+                            raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
+                    await websocket.send_json({
+                                                "status": "success",
+                                                "action": command.action,
+                                                "fan_mode": command.fan_mode
+                                              })
+                except HTTPException as e:
+                    await websocket.send_json({
+                                                      "status": "error",
+                                                      "detail": e.detail,
+                                                      "code": e.status_code
+                                                  })
+            except ValidationError as e:
+                await websocket.send_json({
+                                              "status": "validation_error",
+                                              "detail": e.errors(),
+                                              "code": 422,
+                                          })
+    except WebSocketDisconnect:
+        logging.info("Control client disconnected")
+    except Exception as e:
+        logging.error(f"WebSocket error: {str(e)}")
+        await websocket.send_json({
+                                      "status": "critical_error",
+                                      "detail": str(e),
+                                      "code": 500
+                                  })
+    finally:
+        await websocket.close()
+
 # Test HTML
 @app.get("/ws_test")
 async def ws_test():
@@ -99,6 +155,63 @@ async def ws_test():
         const ws = new WebSocket("ws://localhost:8000/ws/state");
         ws.onmessage = (event) => console.log(event.data);
     </script>
+    """)
+
+@app.get("/ws-control-test")
+async def websocket_control_test():
+    return HTMLResponse("""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Robot Control WS Test</title>
+        <style>
+            button { margin: 5px; padding: 10px; }
+            .log { margin-top: 20px; font-family: monospace; }
+        </style>
+    </head>
+    <body>
+        <h1>Robot WebSocket Control</h1>
+        <div>
+            <button onclick="sendCommand('on')">Turn ON</button>
+            <button onclick="sendCommand('off')">Turn OFF</button>
+            <button onclick="sendCommand('reset')">Reset</button>
+        </div>
+        <div>
+            <button onclick="sendFanCommand('proportional')">Fan: Auto</button>
+            <button onclick="sendFanCommand('static')">Fan: Manual</button>
+        </div>
+        <div class="log" id="log"></div>
+
+        <script>
+            const ws = new WebSocket('ws://' + window.location.host + '/ws/control');
+            const log = document.getElementById('log');
+            
+            function addLog(message) {
+                log.innerHTML += `<div>${new Date().toISOString()}: ${message}</div>`;
+            }
+            
+            ws.onopen = () => addLog("Connected to WebSocket");
+            ws.onclose = () => addLog("Disconnected from WebSocket");
+            ws.onerror = (e) => addLog(`Error: ${JSON.stringify(e)}`);
+            ws.onmessage = (e) => {
+                const data = JSON.parse(e.data);
+                addLog(`Response: ${JSON.stringify(data)}`);
+            };
+            
+            function sendCommand(action) {
+                const command = { action };
+                ws.send(JSON.stringify(command));
+                addLog(`Sent: ${JSON.stringify(command)}`);
+            }
+            
+            function sendFanCommand(fan_mode) {
+                const command = { action: 'fan', fan_mode };
+                ws.send(JSON.stringify(command));
+                addLog(`Sent: ${JSON.stringify(command)}`);
+            }
+        </script>
+    </body>
+    </html>
     """)
 
 if __name__ == "__main__":
