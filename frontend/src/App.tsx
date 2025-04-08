@@ -6,15 +6,19 @@ import LogsMonitor from './components/LogsMonitor';
 function App() {
   return (
     <div className="container">
-      <div className="item A">
-        <RobotState />
+      <div className="row">
+        <div className="item">
+          <RobotState />
+        </div>
+        <div className="item">
+          <RobotControls />
+        </div>
       </div>
-      <div className="item B">
-        <RobotControls />
-      </div>
-      <div className="item C">
+    <div className="row">
+      <div className="item">
         <LogsMonitor />
       </div>
+    </div>
     </div>
   );
 }
