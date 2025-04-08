@@ -10,6 +10,7 @@ export default function RobotControls() {
   const [fanSpeed, setFanSpeed] = useState<number>(0);
   const [powerOn, setPowerOn] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     axios.get("http://localhost:8000/status")
@@ -40,10 +41,25 @@ export default function RobotControls() {
     const command: RobotControlCommand = { action: RobotAction.RESET };
     sendCommand(command);
   };
-  const handleSetFanMode = () => {
+  const handleSetFanMode = async () => {
     const command: RobotControlCommand = { action: RobotAction.FAN, fan_mode: fanMode };
-    sendCommand(command);
+    try{
+      setLoading(true);
+      sendCommand(command);
+      console.log("Fan speed changed.")
+    } catch (err) {
+      console.error("Error changing fan speed: ", err);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  const handleSetFanSpeed = () => {
+    const command: RobotControlCommand = {
+      action: RobotAction.FAN_SPEED, fan_speed: fanSpeed
+    };
+    sendCommand(command);
+  }
 
   return (
     <div className={styles.container}>
@@ -67,6 +83,15 @@ export default function RobotControls() {
         </select>
         <button onClick={handleSetFanMode}>Set Fan Mode</button>
       </div>
+
+      <div>
+        <label>Fan Speed:</label>
+        <input type="range" min="0" max="100" value={fanSpeed} onChange={(e) => setFanSpeed(Number(e.target.value))}/>
+        <span>{fanSpeed}%</span>
+        <button onClick={handleSetFanSpeed} disabled={loading}>
+          {loading ? "Changing..." : "Set Fan Speed"}
+          </button>
+        </div>
     </div >
   );
 
