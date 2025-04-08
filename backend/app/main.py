@@ -87,7 +87,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 "status": state.status,
                 "fan_speed": state.fan_speed,
                 "uptime": state.uptime,
-            }, websocket
+            }
             )
             await asyncio.sleep(0.1) # 10 Hz
     except WebSocketDisconnect:
