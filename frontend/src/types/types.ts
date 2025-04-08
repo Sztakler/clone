@@ -16,9 +16,11 @@ export enum RobotAction {
   OFF = "off",
   RESET = "reset",
   FAN = "fan",
+  FAN_SPEED = "fan_speed",
 }
 
 export interface RobotControlCommand {
   action: RobotAction;
   fan_mode?: FanMode;
+  fan_speed?: number;
 }

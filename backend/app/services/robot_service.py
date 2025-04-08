@@ -60,7 +60,9 @@ class RobotService:
         if self.status == RobotStatus.RUNNING and self.fan_mode is None:
             raise ValueError("fan_mode is required")
         self.power = power
-        self.fan_speed = self.calculate_fan_speed(power)
+
+        if self.fan_mode == FanMode.PROPORTIONAL:
+            self.fan_speed = self.calculate_fan_speed(power)
 
         base_temperature = random.uniform(20, 30)
         temperature = base_temperature + random.uniform(-1, 1) * power - (self.fan_speed * 0.1)
@@ -113,6 +115,18 @@ class RobotService:
         self.fan_mode = fan_mode
         self.logger.info(f"Fan mode set to {self.fan_mode}.")
         return True
+
+    def set_fan_speed(self, fan_speed: int):
+        if self.fan_mode != FanMode.STATIC:
+            logging.error(f"Cannot set static fan speed when fan mode is {self.fan_mode}")
+            return False
+        if 0 <= fan_speed <= 100:
+            self.fan_speed = fan_speed
+            logging.info(f"Fan speed set to {self.fan_speed}")
+            return True
+        else:
+            logging.error(f"Invalid fan speed: {fan_speed}")
+            return False
 
 robot_service = RobotService()
         
