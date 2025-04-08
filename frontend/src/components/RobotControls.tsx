@@ -47,11 +47,13 @@ export default function RobotControls() {
 
   return (
     <div className={styles.container}>
-      <h2>Robot Controls</h2>
-      <div className={styles.controlButtons}>
-        <button onClick={handleTurnOn}>Turn ON</button>
-        <button onClick={handleTurnOff}>Turn OFF</button>
-        <button onClick={handleReset}>Reset</button>
+      <div>
+        <h2>Robot Controls</h2>
+        <div className={styles.controlButtons}>
+          <button onClick={handleTurnOn}>Turn ON</button>
+          <button onClick={handleTurnOff}>Turn OFF</button>
+          <button onClick={handleReset}>Reset</button>
+        </div>
       </div>
 
       <div className={styles.fanModeSelect}>
@@ -63,7 +65,7 @@ export default function RobotControls() {
           <option value={FanMode.PROPORTIONAL}> Proportional</option>
           <option value={FanMode.STATIC}> Static</option>
         </select>
-      <button onClick={handleSetFanMode}>Set Fan Mode</button>
+        <button onClick={handleSetFanMode}>Set Fan Mode</button>
       </div>
     </div >
   );
