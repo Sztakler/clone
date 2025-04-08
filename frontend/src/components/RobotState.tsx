@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import { RobotStateData } from "../types/types";
 
-import "./RobotState.css"
+import styles from "./RobotState.module.css"
 
 export default function RobotState() {
   const [state, setState] = useState<RobotStateData | null>(null);
@@ -31,28 +31,28 @@ export default function RobotState() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="container">
-      <h1>Robot State</h1>
+    <div className={styles.container}>
+      <h2>Robot State</h2>
       <ul>
         <li>
           <div>Status:</div>
           <div>{state?.status}</div>
-          </li>
+        </li>
         <li>
           <div>Temperature:</div>
           <div>{state?.temperature}°C</div>
-          </li>
+        </li>
         <li>
           <div>Fan speed:</div><div>{state?.fan_speed}%</div>
-          </li>
+        </li>
         <li>
           <div>Power:</div>
           <div>{state?.power}W</div>
-          </li>
+        </li>
         <li>
           <div>Uptime:</div>
           <div>{state?.uptime}s</div>
-          </li>
+        </li>
       </ul>
     </div>
   )
