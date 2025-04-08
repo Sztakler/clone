@@ -24,3 +24,5 @@ build/
 
 # Miscellaneous
 TODO.md
+*.log.*
+

@@ -1,13 +1,16 @@
 from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 from utils.logging import configure_logging, LogLevel
+from utils.files import read_last_lines
 from services.robot_service import RobotService, robot_service
 from models import RobotControlCommand, RobotState, RobotAction
 import logging
 from pydantic import ValidationError
 from websockethub import WebSocketHub
+import os
+
 
 app = FastAPI()
 
@@ -83,6 +86,49 @@ async def control_robot(command: RobotControlCommand):
             raise HTTPException(status_code=400, detail=f"Unsupported action: {command.action}")
 
     return {"status": "success", "action": command.action}
+
+@app.get(
+    "/logs",
+    response_class=PlainTextResponse,
+    summary="Retrieve latest robot logs",
+    tags=["robot"],
+    responses={
+        200: {
+            "description": "Log content retrieved successfully",
+            "content": {
+                "text/plain": {
+                    "example": (
+                        "2025-04-08 21:47:03 - INFO - Robot turned ON\n"
+                        "2025-04-08 21:47:04 - DEBUG - Fan mode set to AUTO\n"
+                        "2025-04-08 21:47:05 - WARNING - Temperature spike detected"
+                    )
+                }
+            }
+        },
+        404: {
+            "description": "Log file not found"
+        }
+    },
+    description="""
+Returns the most recent lines from the currently active robot log file (`robot_monitor.log`).
+
+This is intended for real-time inspection and debugging from the frontend interface.
+
+⚠️ Does **not** include archived logs (`.log.1`, `.log.2`, etc.).
+
+- Response type: plain text
+"""
+)
+async def get_logs():
+    LOG_FILE_PATH = "./robot_monitor.log"
+    if not os.path.exists(LOG_FILE_PATH):
+        raise HTTPException(status_code=404, detail="Log file not found")
+
+    try:
+        lines = read_last_lines(LOG_FILE_PATH, 50)
+        return "\n".join(lines)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 state_hub = WebSocketHub()
 control_hub = WebSocketHub()
