@@ -1,0 +1,54 @@
+.container {
+  background-color: "#f4f4f9";
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Roboto', sans-serif;
+}
+
+h2 {
+  font-size: 1.8em;
+}
+
+.controlButtons {
+  display: flex;
+  gap: 15px;
+}
+
+.controlButtons button,
+select {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button {
+  padding: 8px;
+  background-color: #4caf56;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+select {
+  width: 150px;
+}
+
+.fanModeSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+
+label {
+  font-size: 1.2em;
+  font-weight: 600;
+}
