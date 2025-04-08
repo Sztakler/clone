@@ -29,19 +29,19 @@ export default function RobotControls() {
     }
   }
 
-  const handleTurnOn = () => {
-    const command: RobotControlCommand = { action: RobotAction.ON };
+  const handleTogglePower = () => {
+    const command: RobotControlCommand = {
+      action: powerOn ? RobotAction.OFF : RobotAction.ON
+    }
+    setPowerOn(!powerOn);
     sendCommand(command);
-  };
+  }
 
-  const handleTurnOff = () => {
-    const command: RobotControlCommand = { action: RobotAction.OFF };
-    sendCommand(command);
-  };
   const handleReset = () => {
     const command: RobotControlCommand = { action: RobotAction.RESET };
     sendCommand(command);
   };
+
   const handleSetFanMode = async () => {
     const command: RobotControlCommand = { action: RobotAction.FAN, fan_mode: fanMode };
     try{
@@ -72,8 +72,9 @@ export default function RobotControls() {
       <div>
         <h2>Robot Controls</h2>
         <div className={styles.controlButtons}>
-          <button onClick={handleTurnOn}>Turn ON</button>
-          <button onClick={handleTurnOff}>Turn OFF</button>
+          <button onClick={handleTogglePower}>
+            {powerOn ? "Turn OFF" : "Turn ON"}
+            </button>
           <button onClick={handleReset}>Reset</button>
         </div>
       </div>
