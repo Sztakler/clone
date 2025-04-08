@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import styles from "./LogsMonitor.module.css"
+
 export default function LogsMonitor() {
   const [logs, setLogs] = useState<string>("");
 
@@ -17,7 +19,7 @@ export default function LogsMonitor() {
   }, []);
 
   return (
-    <div className="logs">
+    <div className={styles.logs}>
       <h2>Robot Logs</h2>
       <pre>{logs}</pre>
     </div>
