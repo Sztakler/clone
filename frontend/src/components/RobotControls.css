@@ -1,0 +1,10 @@
+.container {
+  display: flex;
+  direction: column;
+  gap: 16px;
+  font-family: "Roboto", sans-serif;
+  padding: 24px;
+  background-color: red;
+}
+
+.controlButtons {}
