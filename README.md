@@ -1,6 +1,8 @@
 # Robot Monitoring and Control App
 
-This project is designed to monitor and control a robot through a web interface. The backend is built with FastAPI, while the frontend uses React. WebSockets are implemented but not used by the application, as the specification required using HTTP for communication.
+A full-stack application for monitoring and controlling a robot using an HTTP-based API, built with FastAPI (backend) and React (frontend). WebSockets are also implemented in the backend for extensibility, though the frontend currently communicates via HTTP as per the spec.
+
+---
 
 ## Table of Contents
 
@@ -16,9 +18,20 @@ This project is designed to monitor and control a robot through a web interface.
 
 The goal of this project is to create a simple, functional interface to control and monitor the state of a robot. The backend provides an API to retrieve the robot's state and logs, control the fan speed, and toggle the robot's power. The frontend displays this data and allows the user to interact with the robot.
 
-## Setup
+## 🧠 Project Decisions
 
-### Running Without Docker
+This section highlights important architectural and design decisions made during the development of the project.
+
+- **Stateless Backend**: Logs and robot state are not stored in global variables or shared memory. Instead, a logging mechanism is used to persist logs, and robot state is managed through a dedicated `RobotService` class.
+- **Logging over State**: Instead of holding logs in memory or the app state, Python’s built-in `logging` is used for simplicity and scalability.
+- **WebSockets Ready**: Although the frontend uses HTTP polling (as specified), WebSocket support is fully implemented and ready for use in the backend.
+- **Strict Modularity**: The backend is structured with clear separation between routers, services, and core logic. The frontend follows a component-based structure for clarity and maintainability.
+- **CORS Configuration**: The backend is set up to handle cross-origin requests during local development using FastAPI’s middleware.
+
+
+## 🚀 Setup
+
+### 🔧 Local Development (without Docker)
 
 1. Clone the repository:
     ```bash
@@ -74,7 +87,9 @@ The goal of this project is to create a simple, functional interface to control 
 
 Now you can access the application in your browser at `http://localhost:3000`.
 
-### Running With Docker
+---
+
+### 🐳 Docker-Based Development
 
 To run the application with Docker, you'll need to build and start the containers using Docker Compose.
 
@@ -85,24 +100,42 @@ To run the application with Docker, you'll need to build and start the container
     git clone https://github.com/Sztakler/clone
     ```
 
-3. Navigate to the project root and build the containers:
+3. Navigate to the `backend` directory and build the container:
     ```bash
+    cd backend
+    docker-compose up --build
+    ```
+4. Navigate to the `frontend` directory and build the container:
+    ```bash
+    cd frontend
     docker-compose up --build
     ```
 
-4. This will start both the backend and frontend containers. The application will be accessible at `http://localhost:3000`.
+5. This will start both the backend and frontend containers. The application will be accessible at `http://localhost:3000`.
 
-5. To shut down the containers:
+6. To shut down the container:
     ```bash
     docker-compose down
     ```
 
-## Testing
+## 🧪 Testing
 
-To run tests for the backend, you can use `pytest`. Install the testing dependencies and run:
+### Backend
+
+Backend uses `pytest` for tests. To run them:
 
 ```bash
 cd backend
 pip install -r requirements.txt
 pytest
+````
 
+### Frontend
+
+Frontend uses 'jest' for tests. To run them:
+
+```bash
+cd frontend
+npm install
+npm test
+```
