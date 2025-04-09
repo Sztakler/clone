@@ -16,14 +16,13 @@ from config import config
 app = FastAPI()
 
 log_levels = {
-    "debug": logging.DEBUG,
-    "info": logging.INFO,
-    "warning": logging.WARNING,
-    "error": logging.ERROR,
-    "critical": logging.CRITICAL,
+    "debug": LogLevel.DEBUG,
+    "info": LogLevel.INFO,
+    "warning": LogLevel.WARNING,
+    "error": LogLevel.ERROR,
+    "critical": LogLevel.CRITICAL,
 }
 
-logging.basicConfig(level=log_levels.get(config.log_level, logging.INFO))
 
 def get_robot_service():
     return robot_service
@@ -38,6 +37,7 @@ async def lifespan(app: FastAPI):
     print("Shutting down...")
 
 app = FastAPI(lifespan=lifespan)
+configure_logging(log_levels.get(config.log_level))
     
 origins = [
     "http://localhost:3000",
@@ -147,12 +147,13 @@ This is intended for real-time inspection and debugging from the frontend interf
 """
 )
 async def get_logs():
-    LOG_FILE_PATH = "./robot_monitor.log"
+    LOG_FILE_PATH = "robot_monitor.log"
     if not os.path.exists(LOG_FILE_PATH):
         raise HTTPException(status_code=404, detail="Log file not found")
 
     try:
         lines = read_last_lines(LOG_FILE_PATH, 50)
+        print(lines)
         return "\n".join(lines)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
