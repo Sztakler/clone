@@ -31,6 +31,13 @@ configure_logging(log_level=LogLevel.DEBUG)
 def get_robot_service():
     return robot_service
 
+async def start_robot_service():
+    await robot_service.generate_state_periodically()
+
+@app.on_event("startup")
+async def startup():
+    asyncio.create_task(start_robot_service())
+
 @app.get("/")
 def root():
     logging.info("Endpoint / called")
@@ -47,7 +54,7 @@ async def get_state(robot_service: RobotService = Depends(get_robot_service)):
     Returns the current state of the robot.
     """
     try:
-        state = robot_service.get_state()
+        state = robot_service.get_robot_state()
         logging.info(f"Acquired robot's state: {state}")
         return state
     except Exception as e:
