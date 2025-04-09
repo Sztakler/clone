@@ -15,18 +15,6 @@ from config import config
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 log_levels = {
     "debug": logging.DEBUG,
     "info": logging.INFO,
@@ -51,6 +39,17 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
     
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/")
 def root():
@@ -240,7 +239,7 @@ async def websocket_control(websocket: WebSocket):
 async def ws_test():
     return HTMLResponse("""
     <script>
-        const ws = new WebSocket("ws://localhost:8000/ws/state");
+        const ws = new WebSocket("ws://localhost:5487/ws/state");
         ws.onmessage = (event) => console.log(event.data);
     </script>
     """)
@@ -305,4 +304,5 @@ async def websocket_control_test():
 if __name__ == "__main__":
     import uvicorn
   
-    uvicorn.run(app, host=config.host, port=config.port)
+    print(f"{config.host}")
+    uvicorn.run(app, host=f"{config.host}", port=config.port)
