@@ -97,8 +97,9 @@ export default function RobotControls() {
       </div>
 
       <div className={styles.fanModeSelect}>
-        <label>Fan Mode</label>
+        <label htmlFor="fanModeSelect">Fan Mode</label>
         <select
+          id="fanModeSelect"
           value={fanMode}
           onChange={(e) => setFanMode(e.target.value as FanMode)}
         >

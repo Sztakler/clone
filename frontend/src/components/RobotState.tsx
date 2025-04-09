@@ -43,6 +43,9 @@ export default function RobotState() {
           <div>{state?.temperature}°C</div>
         </li>
         <li>
+          <div>Fan mode:</div><div>{state?.fan_mode}</div>
+        </li>
+        <li>
           <div>Fan speed:</div><div>{state?.fan_speed}%</div>
         </li>
         <li>
