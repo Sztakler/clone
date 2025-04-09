@@ -152,7 +152,7 @@ async def websocket_endpoint(websocket: WebSocket):
     await state_hub.connect(websocket)
     try:
         while True:
-            state = robot_service.get_state()
+            state = robot_service.get_robot_state()
             await state_hub.broadcast_json(
             {
                 "temperature": state.temperature,
