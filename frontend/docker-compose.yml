@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "${REACT_APP_PORT}:${REACT_APP_PORT}"
     volumes:
       - .:/frontend  # Montuj cały projekt do katalogu /frontend w kontenerze
     environment:

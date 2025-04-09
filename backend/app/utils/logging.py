@@ -3,11 +3,13 @@ from logging.handlers import RotatingFileHandler
 from pathlib import Path
 from enum import Enum
 
+
 class LogLevel(str, Enum):
     INFO = "info"
     DEBUG = "debug"
     WARNING = "warning"
     ERROR = "error"
+    CRITICAL = "critical"
 
     def __str__(self):
         return self.value.upper()

@@ -7,6 +7,8 @@ import RobotControls from "../components/RobotControls";
 jest.mock("axios");
 const mockedAxios = axios as jest.Mocked<typeof axios>;
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 describe("RobotControls", () => {
   const mockState: RobotStateData = {
     status: "running",
@@ -26,7 +28,7 @@ describe("RobotControls", () => {
 
     render(<RobotControls />);
     await waitFor(() => {
-      expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost:8000/state");
+      expect(mockedAxios.get).toHaveBeenCalledWith(`${apiUrl}/state`);
     });
 
     expect(screen.getByText(/Robot Controls/i)).toBeInTheDocument();
@@ -52,7 +54,7 @@ describe("RobotControls", () => {
     const button = screen.getByText(/Turn OFF/);
     await userEvent.click(button);
 
-    expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8000/control", {
+    expect(mockedAxios.post).toHaveBeenCalledWith(`${apiUrl}/control`, {
       action: "off",
     });
   });
@@ -67,7 +69,7 @@ describe("RobotControls", () => {
     const button = screen.getByText(/Reset/);
     await userEvent.click(button);
 
-    expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8000/control", {
+    expect(mockedAxios.post).toHaveBeenCalledWith(`${apiUrl}/control`, {
       action: "reset",
     });
   });
@@ -85,7 +87,7 @@ describe("RobotControls", () => {
     await userEvent.selectOptions(select, FanMode.STATIC);
     await userEvent.click(button);
 
-    expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8000/control", {
+    expect(mockedAxios.post).toHaveBeenCalledWith(`${apiUrl}/control`, {
       action: "fan",
       fan_mode: FanMode.STATIC,
     });
@@ -112,7 +114,7 @@ describe("RobotControls", () => {
     await userEvent.click(button);
 
     await waitFor(() =>
-      expect(mockedAxios.post).toHaveBeenCalledWith("http://localhost:8000/control", {
+      expect(mockedAxios.post).toHaveBeenCalledWith(`${apiUrl}/control`, {
         action: "fan_speed",
         fan_speed: 80,
       })
