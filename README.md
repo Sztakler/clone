@@ -139,3 +139,29 @@ cd frontend
 npm install
 npm test
 ```
+
+## ⚡ WebSocket Support
+
+WebSocket support is partially implemented in the backend and works for most use cases. It was initially developed to provide proper real-time updates, which would be more suitable for this kind of robot control app. However, the final implementation uses HTTP polling instead, as per the project specification requirements. 
+
+## ⚙️ Configuration and Environment
+
+- **Default Ports**:
+  - **Backend**: runs on `5487`
+  - **Frontend**: runs on `3000`
+  - You can change them by editing the `.env` files in `backend/.env` and `frontend/.env` respectively.
+
+- **.env Setup**:
+  - Each part of the app can be configured with environment variables using a `.env` file.
+  - Example `.env` file for the **backend** (`backend/.env`):
+    ```env
+    PORT=5487
+    ENV=development
+    ```
+  - Example `.env` file for the **frontend** (`frontend/.env`):
+    ```env
+    REACT_APP_PORT=3000
+    ```
+
+  These values are automatically loaded by Docker Compose or can be used manually when running the app locally.
+
