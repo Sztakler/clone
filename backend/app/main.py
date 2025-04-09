@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import asyncio
 from utils.logging import configure_logging, LogLevel
 from utils.files import read_last_lines
@@ -11,7 +12,6 @@ from pydantic import ValidationError
 from websockethub import WebSocketHub
 import os
 from config import config
-
 
 app = FastAPI()
 
@@ -43,9 +43,14 @@ def get_robot_service():
 async def start_robot_service():
     await robot_service.generate_state_periodically()
 
-@app.on_event("startup")
-async def startup():
+@asynccontextmanager
+async def lifespan(app: FastAPI):
     asyncio.create_task(start_robot_service())
+    yield
+    print("Shutting down...")
+
+app = FastAPI(lifespan=lifespan)
+    
 
 @app.get("/")
 def root():
