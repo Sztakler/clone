@@ -14,7 +14,6 @@ export default function LogsMonitor() {
         setLogs(response.data);
       }
       catch (err: any) {
-        console.error("Error while fetching logs: " + err.message)
         setError("Error fetching robot logs")
       }
 
