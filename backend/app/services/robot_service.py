@@ -3,6 +3,7 @@ import time
 import logging
 from utils.time_utils import to_uint32
 from models import RobotState, RobotStatus, FanMode
+import asyncio
 
 class RobotService:
     def __init__(self):
@@ -17,6 +18,7 @@ class RobotService:
         }
         self.power: float = 0.0
         self.logger = logging.getLogger(__name__)
+        self.robot_state = None
 
     def __repr__(self):
         return (
@@ -77,6 +79,14 @@ class RobotService:
             uptime = self.uptime,
             logs = [f"Power: {power:.1f}W", f"Fan speed: {self.fan_speed}%"]
         )
+
+    async def generate_state_periodically(self):
+        while True:
+            self.robot_state= self.get_state()
+            await asyncio.sleep(0.1)
+
+    def get_robot_state(self):
+        return self.robot_state
 
     def turn_on(self):
         self.logger.info(self.status)
