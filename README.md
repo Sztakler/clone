@@ -7,12 +7,13 @@ A full-stack application for monitoring and controlling a robot using an HTTP-ba
 ## Table of Contents
 
 - [Project Overview](#project-overview)
-- [Setup](#setup)
-  - [Running Without Docker](#running-without-docker)
-  - [Running With Docker](#running-with-docker)
-- [Testing](#testing)
-- [Project Design Decisions](#project-design-decisions)
-- [Notes](#notes)
+- [🧠 Project Decisions](#-project-decisions)
+- [🚀 Setup](#-setup)
+  - [🔧 Local Development (without Docker)](#-local-development-without-docker)
+  - [🐳 Docker-Based Development](#-docker-based-development)
+- [🧪 Testing](#-testing)
+- [⚡ WebSocket Support](#-websocket-support)
+- [⚙️ Configuration and Environment](#️-configuration-and-environment)
 
 ## Project Overview
 
@@ -24,10 +25,9 @@ This section highlights important architectural and design decisions made during
 
 - **Stateless Backend**: Logs and robot state are not stored in global variables or shared memory. Instead, a logging mechanism is used to persist logs, and robot state is managed through a dedicated `RobotService` class.
 - **Logging over State**: Instead of holding logs in memory or the app state, Python’s built-in `logging` is used for simplicity and scalability.
-- **WebSockets Ready**: Although the frontend uses HTTP polling (as specified), WebSocket support is fully implemented and ready for use in the backend.
+- **WebSockets Ready**: Although the frontend uses HTTP polling (as specified), WebSocket support is partially implemented and works for most use cases.
 - **Strict Modularity**: The backend is structured with clear separation between routers, services, and core logic. The frontend follows a component-based structure for clarity and maintainability.
 - **CORS Configuration**: The backend is set up to handle cross-origin requests during local development using FastAPI’s middleware.
-
 
 ## 🚀 Setup
 
@@ -67,7 +67,7 @@ This section highlights important architectural and design decisions made during
                             Log level for the application
       --refresh-rate REFRESH_RATE
                             Frequency of state updates in Hz (default 10Hz)
-      ````
+      ```
     - Example:
     ```bash
     python app/main.py --refresh-rate=10
@@ -83,7 +83,6 @@ This section highlights important architectural and design decisions made during
     ```bash
     npm start
     ```
-
 
 Now you can access the application in your browser at `http://localhost:3000`.
 
@@ -105,6 +104,7 @@ To run the application with Docker, you'll need to build and start the container
     cd backend
     docker-compose up --build
     ```
+
 4. Navigate to the `frontend` directory and build the container:
     ```bash
     cd frontend
@@ -128,11 +128,11 @@ Backend uses `pytest` for tests. To run them:
 cd backend
 pip install -r requirements.txt
 pytest
-````
+```
 
 ### Frontend
 
-Frontend uses 'jest' for tests. To run them:
+Frontend uses `jest` for tests. To run them:
 
 ```bash
 cd frontend
@@ -142,7 +142,7 @@ npm test
 
 ## ⚡ WebSocket Support
 
-WebSocket support is partially implemented in the backend and works for most use cases. It was initially developed to provide proper real-time updates, which would be more suitable for this kind of robot control app. However, the final implementation uses HTTP polling instead, as per the project specification requirements. 
+WebSocket support is **partially implemented** in the backend and works for most use cases. It was initially developed to enable proper real-time updates, which would be ideal for a robot control app. However, due to project specification requirements, the final implementation uses **HTTP polling only**.
 
 ## ⚙️ Configuration and Environment
 
