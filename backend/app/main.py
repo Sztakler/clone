@@ -10,6 +10,7 @@ import logging
 from pydantic import ValidationError
 from websockethub import WebSocketHub
 import os
+from config import config
 
 
 app = FastAPI()
@@ -26,7 +27,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-configure_logging(log_level=LogLevel.DEBUG)
+log_levels = {
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "critical": logging.CRITICAL,
+}
+
+logging.basicConfig(level=log_levels.get(config.log_level, logging.INFO))
 
 def get_robot_service():
     return robot_service
@@ -291,4 +300,4 @@ async def websocket_control_test():
 if __name__ == "__main__":
     import uvicorn
   
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host=config.host, port=config.port)
