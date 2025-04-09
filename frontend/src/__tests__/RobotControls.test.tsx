@@ -99,14 +99,12 @@ describe("RobotControls", () => {
     render(<RobotControls />);
     await waitFor(() => screen.getByText(/Set speed/));
 
-    // Zmieniamy fan mode na STATIC
     const fanModeSelect = screen.getByLabelText(/Fan Mode/i);
     fireEvent.change(fanModeSelect, { target: { value: FanMode.STATIC } });
 
     const setModeBtn = screen.getByText(/Set mode/i);
     await userEvent.click(setModeBtn);
 
-    // Ustawiamy speed
     const range = screen.getByRole("slider");
     const button = screen.getByText(/Set speed/);
 

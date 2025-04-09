@@ -36,9 +36,7 @@ export default function RobotControls() {
   const sendCommand = async (command: RobotControlCommand) => {
     try {
       const response = await axios.post("http://localhost:8000/control", command);
-      console.log('Success:', response.data);
     } catch (err: any) {
-      console.error("Error sending command:", err);
       setControlError("Error sending command " + err.message);
     }
   }
@@ -61,10 +59,8 @@ export default function RobotControls() {
     try {
       setLoading(true);
       sendCommand(command);
-      console.log("Fan speed changed.")
     } catch (err: any) {
       setControlError("Error changing fan speed")
-      console.error("Error changing fan speed: ", err.message);
     } finally {
       if (command.fan_mode === FanMode.STATIC)
         setDisabledSetSpeed(false);
