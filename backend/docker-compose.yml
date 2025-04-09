@@ -1,11 +1,11 @@
-version: '3'
 services:
   backend:
     build: .
     ports:
-      - "8000:8000"
+      - "${PORT}:${PORT}"   
     volumes:
       - .:/app
     environment:
       - ENV=development
-
+      - PORT=${PORT}
+      - HOST=${HOST}

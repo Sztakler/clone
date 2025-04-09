@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import asyncio
 from utils.logging import configure_logging, LogLevel
 from utils.files import read_last_lines
@@ -10,10 +11,34 @@ import logging
 from pydantic import ValidationError
 from websockethub import WebSocketHub
 import os
-
+from config import config
 
 app = FastAPI()
 
+log_levels = {
+    "debug": logging.DEBUG,
+    "info": logging.INFO,
+    "warning": logging.WARNING,
+    "error": logging.ERROR,
+    "critical": logging.CRITICAL,
+}
+
+logging.basicConfig(level=log_levels.get(config.log_level, logging.INFO))
+
+def get_robot_service():
+    return robot_service
+
+async def start_robot_service():
+    await robot_service.generate_state_periodically()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    asyncio.create_task(start_robot_service())
+    yield
+    print("Shutting down...")
+
+app = FastAPI(lifespan=lifespan)
+    
 origins = [
     "http://localhost:3000",
 ]
@@ -25,18 +50,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-configure_logging(log_level=LogLevel.DEBUG)
-
-def get_robot_service():
-    return robot_service
-
-async def start_robot_service():
-    await robot_service.generate_state_periodically()
-
-@app.on_event("startup")
-async def startup():
-    asyncio.create_task(start_robot_service())
 
 @app.get("/")
 def root():
@@ -226,7 +239,7 @@ async def websocket_control(websocket: WebSocket):
 async def ws_test():
     return HTMLResponse("""
     <script>
-        const ws = new WebSocket("ws://localhost:8000/ws/state");
+        const ws = new WebSocket("ws://localhost:5487/ws/state");
         ws.onmessage = (event) => console.log(event.data);
     </script>
     """)
@@ -291,4 +304,5 @@ async def websocket_control_test():
 if __name__ == "__main__":
     import uvicorn
   
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print(f"{config.host}")
+    uvicorn.run(app, host=f"{config.host}", port=config.port)

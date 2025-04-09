@@ -4,6 +4,8 @@ import { RobotStateData } from "../types/types";
 
 import styles from "./RobotState.module.css"
 
+const apiUrl = process.env.REACT_APP_API_URL;
+
 export default function RobotState() {
   const [state, setState] = useState<RobotStateData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -11,7 +13,7 @@ export default function RobotState() {
 
   async function fetchState() {
     try {
-      const response = await axios.get<RobotStateData>('http://localhost:8000/state');
+      const response = await axios.get<RobotStateData>(`${apiUrl}/state`);
       setState(response.data);
       setLoading(false);
     } catch (err) {

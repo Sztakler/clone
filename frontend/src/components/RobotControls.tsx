@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
-import axios, { CanceledError } from "axios";
+import axios from "axios";
 import { FanMode, RobotAction, RobotControlCommand, RobotStateData } from "../types/types";
 
 import styles from "./RobotControls.module.css"
-import RobotState from "./RobotState";
+
+const apiUrl = process.env.REACT_APP_API_URL;
 
 export default function RobotControls() {
-  const [state, setState] = useState<RobotStateData | null>(null);
-  const [status, setStatus] = useState<string | null>(null);
   const [fanMode, setFanMode] = useState<FanMode>(FanMode.PROPORTIONAL);
   const [fanSpeed, setFanSpeed] = useState<number>(0);
   const [powerOn, setPowerOn] = useState<boolean>(true);
@@ -18,8 +17,7 @@ export default function RobotControls() {
 
   async function fetchState() {
     try {
-      const response = await axios.get<RobotStateData>('http://localhost:8000/state');
-      setState(response.data);
+      const response = await axios.get<RobotStateData>(`${apiUrl}/state`);
       setLoading(false);
       if (response.data.status === "offline")
         setPowerOn(false);
@@ -35,7 +33,8 @@ export default function RobotControls() {
 
   const sendCommand = async (command: RobotControlCommand) => {
     try {
-      const response = await axios.post("http://localhost:8000/control", command);
+      const response = await axios.post(`${apiUrl}/control`, command);
+      console.log(response.status)
     } catch (err: any) {
       setControlError("Error sending command " + err.message);
     }
@@ -78,7 +77,7 @@ export default function RobotControls() {
   }
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (error) return <div>{error} {controlError}</div>;
 
   return (
     <div className={styles.container}>
