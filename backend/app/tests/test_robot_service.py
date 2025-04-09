@@ -1,6 +1,6 @@
 import unittest
-from app.models import RobotState, RobotStatus, FanMode
-from app.services.robot_service import RobotService
+from models import RobotState, RobotStatus, FanMode
+from services.robot_service import RobotService
 
 class TestRobotService(unittest.TestCase):
     def setUp(self):
