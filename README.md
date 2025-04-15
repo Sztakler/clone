@@ -26,7 +26,7 @@ This section highlights important architectural and design decisions made during
 - **Stateless Backend**: Logs and robot state are not stored in global variables or shared memory. Instead, a logging mechanism is used to persist logs, and robot state is managed through a dedicated `RobotService` class.
 - **Logging over State**: Instead of holding logs in memory or the app state, Python’s built-in `logging` is used for simplicity and scalability.
 - **WebSockets Ready**: Although the frontend uses HTTP polling (as specified), WebSocket support is partially implemented and works for most use cases.
-- **Strict Modularity**: The backend is structured with clear separation between routers, services, and core logic. The frontend follows a component-based structure for clarity and maintainability.
+- **Strict Modularity**: The frontend follows a component-based structure for clarity and maintainability. Backend needs some refactoring.
 - **CORS Configuration**: The backend is set up to handle cross-origin requests during local development using FastAPI’s middleware.
 
 ## 🚀 Setup
