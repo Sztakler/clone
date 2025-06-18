@@ -1,6 +1,6 @@
 # Robot Monitoring and Control App
 
-A full-stack application for monitoring and controlling a robot using an HTTP-based API, built with FastAPI (backend) and React (frontend). WebSockets are also implemented in the backend for extensibility, though the frontend currently communicates via HTTP as per the spec.
+A full-stack application for monitoring and controlling a robot using an HTTP-based API, built with FastAPI (backend) and React (frontend). WebSockets are also implemented in the backend for extensibility, though the frontend currently communicates via HTTP.
 
 ---
 
